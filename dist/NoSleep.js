@@ -8,7 +8,7 @@
 		exports["NoSleep"] = factory();
 	else
 		root["NoSleep"] = factory();
-})(this, function() {
+})(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -88,7 +88,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var mediaFile = __webpack_require__(1);
 
 // Detect iOS browsers < version 10
-var oldIOS = typeof navigator !== 'undefined' && parseFloat(('' + (/CPU.*OS ([0-9_]{3,4})[0-9_]{0,1}|(CPU like).*AppleWebKit.*Mobile/i.exec(navigator.userAgent) || [0, ''])[1]).replace('undefined', '3_2').replace('_', '.').replace('_', '')) < 10 && !window.MSStream;
+var oldIOS = typeof navigator !== "undefined" && parseFloat(("" + (/CPU.*OS ([0-9_]{3,4})[0-9_]{0,1}|(CPU like).*AppleWebKit.*Mobile/i.exec(navigator.userAgent) || [0, ""])[1]).replace("undefined", "3_2").replace("_", ".").replace("_", "")) < 10 && !window.MSStream;
 
 var NoSleep = function () {
   function NoSleep() {
@@ -98,12 +98,14 @@ var NoSleep = function () {
       this.noSleepTimer = null;
     } else {
       // Set up no sleep video element
-      this.noSleepVideo = document.createElement('video');
+      this.noSleepVideo = document.createElement("video");
 
-      this.noSleepVideo.setAttribute('playsinline', '');
-      this.noSleepVideo.setAttribute('src', mediaFile);
+      this.noSleepVideo.setAttribute("title", "No Sleep");
+      this.noSleepVideo.setAttribute("playsinline", "");
+      this.noSleepVideo.setAttribute("muted", "");
+      this.noSleepVideo.setAttribute("src", mediaFile);
 
-      this.noSleepVideo.addEventListener('timeupdate', function (e) {
+      this.noSleepVideo.addEventListener("timeupdate", function (e) {
         if (this.noSleepVideo.currentTime > 0.5) {
           this.noSleepVideo.currentTime = Math.random();
         }
@@ -112,20 +114,28 @@ var NoSleep = function () {
   }
 
   _createClass(NoSleep, [{
-    key: 'enable',
+    key: "enable",
     value: function enable() {
       if (oldIOS) {
         this.disable();
         this.noSleepTimer = window.setInterval(function () {
-          window.location.href = '/';
+          window.location.href = "/";
           window.setTimeout(window.stop, 0);
         }, 15000);
       } else {
-        this.noSleepVideo.play();
+        var playPromise = this.noSleepVideo.play();
+
+        if (playPromise) {
+          playPromise.then(function (_) {
+            console.log("NoSleep.js: play is succefull");
+          }).catch(function (error) {
+            console.warn("NoSleep.js: something went wrong " + error);
+          });
+        }
       }
     }
   }, {
-    key: 'disable',
+    key: "disable",
     value: function disable() {
       if (oldIOS) {
         if (this.noSleepTimer) {
@@ -140,8 +150,6 @@ var NoSleep = function () {
 
   return NoSleep;
 }();
-
-;
 
 module.exports = NoSleep;
 
